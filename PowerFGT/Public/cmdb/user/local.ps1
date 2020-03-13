@@ -5,6 +5,104 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+function Add-FGTUserLocal {
+
+    <#
+        .SYNOPSIS
+        Add a FortiGate Address
+
+        .DESCRIPTION
+        Add a FortiGate Address (ipmask, fqdn, widlcard...)
+
+        .EXAMPLE
+        Add-FGTFirewallAddress -type ipmask -Name FGT -ip 192.2.0.0 -mask 255.255.255.0
+
+        Add Address objet type ipmask with name FGT and value 192.2.0.0/24
+
+        .EXAMPLE
+        Add-FGTFirewallAddress -type ipmask -Name FGT -ip 192.2.0.0 -mask 255.255.255.0 -interface port2
+
+        Add Address objet type ipmask with name FGT, value 192.2.0.0/24 and associated to interface port2
+
+        .EXAMPLE
+        Add-FGTFirewallAddress -type ipmask -Name FGT -ip 192.2.0.0 -mask 255.255.255.0 -comment "My FGT Address"
+
+        Add Address objet type ipmask with name FGT, value 192.2.0.0/24 and a comment
+
+        .EXAMPLE
+        Add-FGTFirewallAddress -type ipmask -Name FGT -ip 192.2.0.0 -mask 255.255.255.0 -visibility:$false
+
+        Add Address objet type ipmask with name FGT, value 192.2.0.0/24 and disabled visibility
+
+    #>
+
+    Param(
+        [Parameter (Mandatory = $true)]
+        [ValidateLength(1, 64)]
+        [string]$name,
+        [Parameter (Mandatory = $false)]
+        [switch]$status,
+        [Parameter (Mandatory = $false)]
+        [string]$passwd,
+        [Parameter (Mandatory = $false)]
+        [ValidateSet("password", "radius", "tacacs+", "ldap")]
+        [string]$type = "password",
+        [Parameter (Mandatory = $false)]
+        [ValidateLength(1, 63)]
+        [string]$emailto,
+        [Parameter (Mandatory = $false)]
+        [ValidateSet("disable", "fortitoken", "email", "sms", "fortitoken-cloud")]
+        [string]$twofactor = "password",
+        [Parameter(Mandatory = $false)]
+        [String[]]$vdom,
+        [Parameter(Mandatory = $false)]
+        [psobject]$connection = $DefaultFGTConnection
+    )
+
+    Begin {
+    }
+
+    Process {
+
+        $invokeParams = @{ }
+        if ( $PsBoundParameters.ContainsKey('vdom') ) {
+            $invokeParams.add( 'vdom', $vdom )
+        }
+
+        if ( Get-FGTUserLocal @invokeParams -name $name -connection $connection) {
+            Throw "Already an user using the same name"
+        }
+
+        $uri = "api/v2/cmdb/user/local"
+
+        $_user = new-Object -TypeName PSObject
+
+        $_user | add-member -name "name" -membertype NoteProperty -Value $name
+
+        $_user | add-member -name "type" -membertype NoteProperty -Value $type
+
+        if ( $PsBoundParameters.ContainsKey('status') ) {
+            if ( $status ) {
+                $_user | add-member -name "status" -membertype NoteProperty -Value "enable"
+            }
+            else {
+                $_user | add-member -name "status" -membertype NoteProperty -Value "disable"
+            }
+        }
+
+        if ( $PsBoundParameters.ContainsKey('passwd') ) {
+            $_user | add-member -name "passwd" -membertype NoteProperty -Value $passwd
+        }
+
+        Invoke-FGTRestMethod -method "POST" -body $_user -uri $uri -connection $connection @invokeParams | out-Null
+
+        Get-FGTUserLocal -connection $connection @invokeParams -name $name
+    }
+
+    End {
+    }
+}
+
 function Get-FGTUserLocal {
 
     <#
