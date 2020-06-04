@@ -71,6 +71,8 @@ function Add-FGTFirewallPolicy {
         [string]$name,
         [Parameter (Mandatory = $false)]
         [int]$policyid,
+        [Parameter (Mandatory = $false)]
+        [string]$uuid,
         [Parameter (Mandatory = $true)]
         [string[]]$srcintf,
         [Parameter (Mandatory = $true)]
@@ -177,6 +179,10 @@ function Add-FGTFirewallPolicy {
 
         if ( $PsBoundParameters.ContainsKey('policyid') ) {
             $policy | add-member -name "policyid" -membertype NoteProperty -Value $policyid
+        }
+
+        if ( $PsBoundParameters.ContainsKey('uuid') ) {
+            $policy | add-member -name "uuid" -membertype NoteProperty -Value $uuid
         }
 
         $policy | add-member -name "srcintf" -membertype NoteProperty -Value $srcintf_array
