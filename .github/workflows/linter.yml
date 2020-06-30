@@ -43,6 +43,6 @@ jobs:
       # Run Linter against code base #
       ################################
       - name: Lint Code Base
-        uses: uses: github/super-linter@master
+        uses: github/super-linter@master
         env:
           VALIDATE_ALL_CODEBASE: true
