@@ -17,6 +17,7 @@ jobs:
       shell: pwsh
       run: Import-Module ./PowerFGT
     - name: Write Config
+      shell: pwsh
       run: |
         $file = "$$script:address = '1.1.1.1
         $$script:port = '80'
