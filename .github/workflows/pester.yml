@@ -12,7 +12,7 @@ jobs:
       shell: pwsh
       run: |
         Set-PSRepository PSGallery -InstallationPolicy Trusted
-        Install-Module Pester --AllowPreRelease
+        Install-Module Pester -AllowPreRelease
     - name: Import PowerFGT Module
       shell: pwsh
       run: Import-Module ./PowerFGT
