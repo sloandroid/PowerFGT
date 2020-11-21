@@ -16,26 +16,20 @@ jobs:
     - name: Import PowerFGT Module
       shell: pwsh
       run: Import-Module ./PowerFGT
-    - name: Write Config
+    - name: Write empty config
       shell: pwsh
       run: |
-        $file = '
-        $script:ipaddress = "$env:IPADDRESS"
-        $script:port = "$env:PORT_V62"
-        $script:login = "$env:LOGIN"
-        $script:password = "$env:PASSWORD"
-        $script:httponly = "$env:HTTPONLY"
-        '
+        $file = ''
         $file | Out-File -FilePath Tests/credential.ps1
         more Tests/credential.ps1
-      env:
-        IPADDRESS: ${{secrets.IPADDRESS}}
-        PORT_V62: ${{secrets.PORT_V62}}
-        LOGIN: ${{secrets.IPADDRESS}}
-        PASSWORD: ${{secrets.PASSWORD}}
-        HTTPONLY: ${{secrets.HTTPONLY}}
     - name: Pester
       shell: pwsh
       run: |
         cd Tests/integration
         Invoke-Pester * -Passthru
+      env:
+        IPADDRESS: ${{secrets.IPADDRESS}}
+        PORT: ${{secrets.PORT_V62}}
+        LOGIN: ${{secrets.IPADDRESS}}
+        PASSWORD: ${{secrets.PASSWORD}}
+        HTTPONLY: ${{secrets.HTTPONLY}}
