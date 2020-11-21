@@ -20,17 +20,20 @@ jobs:
       shell: pwsh
       run: |
         $file = '
-        $script:ipaddress = '$env:IPADDRESS'
+        $script:ipaddress = $env:IPADDRESS
         $script:port = $env:PORT_V62
-        $script:login = ${{ secrets.LOGIN }}
-        $script:password = ${{ secrets.PASSWORD }}
-        $script:httponly = ${{ secrets.HTTPONLY }}
-        ''
+        $script:login = $env:LOGIN
+        $script:password = $env:PASSWORD
+        $script:httponly = $env:HTTPONLY
+        '
         $file | Out-File -FilePath Tests/credential.ps1
         more Tests/credential.ps1
       env:
         IPADDRESS: ${{secrets.IPADDRESS}}
         PORT_V62: ${{secrets.PORT_V62}}
+        LOGIN: ${{secrets.IPADDRESS}}
+        PASSWORD: ${{secrets.PASSWORD}}
+        HTTPONLY: ${{ secrets.HTTPONLY }}
     - name: Pester
       shell: pwsh
       run: |
