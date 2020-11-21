@@ -21,7 +21,7 @@ jobs:
       run: |
         $file = "\$script:address = '1.1.1.1
         \$script:port = '80'
-        \$script:login = ${{ secrets.LOGIN }}"
+        \$script:login = ${{ secrets.LOGIN }}
         "
         $file | Out-File -FilePath Tests/credential.pss
         more Tests/credential.pss
