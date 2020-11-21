@@ -8,10 +8,12 @@ jobs:
     steps:
     - name: Check out repository code
       uses: actions/checkout@v2
+    - name: Import PowerFGT Module
+      shell: pwsh
+      run: Import-Module ./PowerFGT
     - name: Go to test integration folder
       shell: pwsh
       run: cd Tests/integration
     - name: Pester
       shell: pwsh
-      run: |
-        Invoke-Pester * -Passthru
+      run: Invoke-Pester * -Passthru
