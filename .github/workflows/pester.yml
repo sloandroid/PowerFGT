@@ -11,12 +11,6 @@ jobs:
     - name: Import PowerFGT Module
       shell: pwsh
       run: Import-Module ./PowerFGT
-    - name: Go to test integration folder
-      shell: pwsh
-      run: cd Tests/integration
     - name: Pester
       shell: pwsh
-      run: Invoke-Pester * -Passthru
-    - name: Pester
-      shell: pwsh
-      run: ls -l ..
+      run: cd Tests/integration && Invoke-Pester * -Passthru
