@@ -11,4 +11,7 @@ jobs:
     - name: Go to test integration folder
       shell: pwsh
       run: cd Tests/integration
-      run: Invoke-Pester * -Passthru
+    - name: Pester
+      shell: pwsh
+      run: |
+        Invoke-Pester * -Passthru
