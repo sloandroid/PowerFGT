@@ -19,10 +19,10 @@ jobs:
     - name: Write Config
       shell: pwsh
       run: |
-        $file = "$$script:address = '1.1.1.1
-        $$script:port = '80'
+        $file = '$script:address = "1.1.1.1"
+        $$script:port = "8138"
         $script:login = ${{ secrets.LOGIN }}
-        "
+        '
         $file | Out-File -FilePath Tests/credential.ps1
         more Tests/credential.ps1
     - name: Pester
