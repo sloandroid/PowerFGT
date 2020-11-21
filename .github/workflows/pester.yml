@@ -8,9 +8,16 @@ jobs:
     steps:
     - name: Check out repository code
       uses: actions/checkout@v2
+    - name: Install Pester v5(.1)
+      shell: pwsh
+      run: |
+        Set-PSRepository PSGallery -InstallationPolicy Trusted
+        Install-Module Pester --AllowPreRelease
     - name: Import PowerFGT Module
       shell: pwsh
       run: Import-Module ./PowerFGT
     - name: Pester
       shell: pwsh
-      run: cd Tests/integration && Invoke-Pester * -Passthru
+      run: |
+        cd Tests/integration
+        Invoke-Pester * -Passthru
