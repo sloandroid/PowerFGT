@@ -13,9 +13,6 @@ jobs:
       run: |
         Set-PSRepository PSGallery -InstallationPolicy Trusted
         Install-Module Pester -AllowPreRelease -Force
-    - name: Import PowerFGT Module
-      shell: pwsh
-      run: Import-Module ./PowerFGT
     - name: Write Config
       shell: pwsh
       run: |
@@ -37,8 +34,9 @@ jobs:
     - name: Pester
       shell: pwsh
       run: |
+        Import-Module ./PowerFGT
         cd Tests/integration
-        Invoke-Pester * -Passthru
+        Invoke-Pester *
       env:
         IPADDRESS: ${{secrets.IPADDRESS}}
         PORT: ${{secrets.PORT_V62}}
