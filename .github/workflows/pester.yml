@@ -18,7 +18,7 @@ jobs:
       run: |
         $file = '
         $script:ipaddress = "$env:IPADDRESS"
-        $script:port = "$env:PORT_V62"
+        $script:port = $env:PORT_V62
         $script:login = "$env:LOGIN"
         $script:password = "$env:PASSWORD"
         $script:httponly = [bool]$env:HTTPONLY
