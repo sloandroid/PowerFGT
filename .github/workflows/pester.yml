@@ -16,12 +16,18 @@ jobs:
     - name: Import PowerFGT Module
       shell: pwsh
       run: Import-Module ./PowerFGT
-    - name: Write empty config
+    - name: Write Config
       shell: pwsh
       run: |
         $file = ''
         $file | Out-File -FilePath Tests/credential.ps1
         more Tests/credential.ps1
+      env:
+        IPADDRESS: ${{secrets.IPADDRESS}}
+        PORT_V62: ${{secrets.PORT_V62}}
+        LOGIN: ${{secrets.IPADDRESS}}
+        PASSWORD: ${{secrets.PASSWORD}}
+        HTTPONLY: ${{secrets.HTTPONLY}}
     - name: Pester
       shell: pwsh
       run: |
