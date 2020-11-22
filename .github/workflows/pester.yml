@@ -28,7 +28,7 @@ jobs:
       env:
         IPADDRESS: ${{secrets.IPADDRESS}}
         PORT_V62: ${{secrets.PORT_V62}}
-        LOGIN: ${{secrets.IPADDRESS}}
+        LOGIN: ${{secrets.LOGIN}}
         PASSWORD: ${{secrets.PASSWORD}}
         HTTPONLY: ${{secrets.HTTPONLY}}
     - name: Pester
@@ -40,6 +40,6 @@ jobs:
       env:
         IPADDRESS: ${{secrets.IPADDRESS}}
         PORT: ${{secrets.PORT_V62}}
-        LOGIN: ${{secrets.IPADDRESS}}
+        LOGIN: ${{secrets.LOGIN}}
         PASSWORD: ${{secrets.PASSWORD}}
         HTTPONLY: ${{secrets.HTTPONLY}}
