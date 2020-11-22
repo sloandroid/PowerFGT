@@ -36,7 +36,7 @@ jobs:
       run: |
         Import-Module ./PowerFGT
         cd Tests/integration
-        Invoke-Pester * -Output Detailed -EnableExit
+        Invoke-Pester * -Output Detailed -CI
       env:
         IPADDRESS: ${{secrets.IPADDRESS}}
         PORT: ${{secrets.PORT_V62}}
