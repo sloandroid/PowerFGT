@@ -19,7 +19,13 @@ jobs:
     - name: Write Config
       shell: pwsh
       run: |
-        $file = ''
+        $file = '
+        $script:ipaddress = "$env:IPADDRESS"
+        $script:port = "$env:PORT_V62"
+        $script:login = "$env:LOGIN"
+        $script:password = "$env:PASSWORD"
+        $script:httponly = "$env:HTTPONLY"
+        '
         $file | Out-File -FilePath Tests/credential.ps1
         more Tests/credential.ps1
       env:
