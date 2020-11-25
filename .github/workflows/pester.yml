@@ -11,6 +11,7 @@ jobs:
     - name: Install Pester v5(.1)
       shell: pwsh
       run: |
+        Get-Module -ListAvailable
         Set-PSRepository PSGallery -InstallationPolicy Trusted
         Install-Module Pester -AllowPreRelease -Force
     - name: Write Config
