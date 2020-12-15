@@ -109,9 +109,9 @@ function Add-FGTSystemZone {
         Add a zone (name, intrazone, member...)
 
         .EXAMPLE
-        Add-FGTSystemZone -name myPowerFGTZone -intrazone allow -interfaces port5
+        Add-FGTSystemZone -name myPowerFGTZone -intrazone allow -interfaces port5 -description "Add via PowerFG"
 
-        Add a zone named myPowerFGTZone with intra-zone traffic Allow and with port5
+        Add a zone named myPowerFGTZone with intra-zone traffic Allow and with port5 with a description
 
         .EXAMPLE
         Add-FGTSystemZone -name myPowerFGTZone -intrazone deny -interfaces port5,port6
@@ -127,6 +127,9 @@ function Add-FGTSystemZone {
         [string]$intrazone,
         [Parameter(Mandatory = $false)]
         [string[]]$interfaces,
+        [Parameter(Mandatory = $false)]
+        [ValidateLength(0, 127)]
+        [string]$description,
         [Parameter(Mandatory = $false)]
         [String[]]$vdom,
         [Parameter(Mandatory = $false)]
@@ -166,6 +169,10 @@ function Add-FGTSystemZone {
             $zone | add-member -name "intrazone" -membertype NoteProperty -Value $intrazone
         }
 
+        if ( $PsBoundParameters.ContainsKey('description') ) {
+            $zone | add-member -name "description" -membertype NoteProperty -Value $description
+        }
+
         Invoke-FGTRestMethod -uri 'api/v2/cmdb/system/zone' -method 'POST' -body $zone -connection $connection @invokeParams | Out-Null
         Get-FGTSystemZone -name $name -connection $connection @invokeParams
 
@@ -198,6 +205,11 @@ function Set-FGTSystemZone {
         Get-FGTSystemZone -name myPowerFGTZone | Set-FGTSystemZone -name new_myPowerFGTZone
 
         Set the zone named myPowerFGTZone with new name new_myPowerFGTZone
+
+        .EXAMPLE
+        Get-FGTSystemZone -name myPowerFGTZone | Set-FGTSystemZone -description "Modified by PowerFGT"
+
+        Set the zone named myPowerFGTZone with a description
     #>
 
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'medium')]
@@ -212,6 +224,9 @@ function Set-FGTSystemZone {
         [string]$intrazone,
         [Parameter(Mandatory = $false)]
         [string[]]$interfaces,
+        [Parameter(Mandatory = $false)]
+        [ValidateLength(0, 127)]
+        [string]$description,
         [Parameter(Mandatory = $false)]
         [String[]]$vdom,
         [Parameter(Mandatory = $false)]
@@ -255,6 +270,10 @@ function Set-FGTSystemZone {
         else {
             # kept name for get system zone after...
             $name = $zone.name
+        }
+
+        if ( $PsBoundParameters.ContainsKey('description') ) {
+            $zone_body | add-member -name "description" -membertype NoteProperty -Value $description
         }
 
         if ($PSCmdlet.ShouldProcess($zone.name, 'Set zone')) {
