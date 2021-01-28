@@ -142,8 +142,9 @@ function Connect-FGT {
         }
 
         $uri = $url + "logincheck"
+        $iwrResponse = $null
         try {
-            Invoke-WebRequest $uri -Method POST -Body $postParams -SessionVariable FGT @invokeParams | Out-Null
+            $iwrResponse = Invoke-WebRequest $uri -Method POST -Body $postParams -SessionVariable FGT @invokeParams
         }
         catch {
             Show-FGTException $_
@@ -168,6 +169,17 @@ function Connect-FGT {
         #Add csrf cookie to header (X-CSRFTOKEN)
         $headers = @{"X-CSRFTOKEN" = $cookie_csrf }
 
+        $uri = $url + "logindisclaimer"
+        if($iwrResponse.Content -match '/logindisclaimer')
+        {
+            try {
+                Invoke-WebRequest $uri -Method "POST" -WebSession $FGT @invokeParams -Body @{confirm = 1} -Headers $headers | Out-Null
+            }
+            catch {
+                throw "Unable to connect"
+            }
+        }
+        
         $uri = $url + "api/v2/monitor/system/firmware"
         try {
             $version = Invoke-RestMethod $uri -Method "get" -WebSession $FGT @invokeParams
