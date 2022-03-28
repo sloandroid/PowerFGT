@@ -21,7 +21,7 @@ function Connect-FGT {
       .EXAMPLE
       Connect-FGT -Server 192.0.2.1 -SkipCertificateCheck
 
-      Connect to a FortiGate with IP 192.0.2.1 and disable certificate (chain) check
+      Connect to a FortiGate with IP 192.0.2.1 and disable certificate (schain) check
 
       .EXAMPLE
       Connect-FGT -Server 192.0.2.1 -httpOnly
