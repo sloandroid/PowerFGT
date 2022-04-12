@@ -36,14 +36,14 @@ Connect to a FortiGate
 Connect-FGT -Server 192.0.2.1
 ```
 
-Connect to a FortiGate with IP 192.0.2.1
+Connect to a FortiGate with IP 192.0.2.1dzd
 
 ### EXAMPLE 2
 ```
 Connect-FGT -Server 192.0.2.1 -SkipCertificateCheck
 ```
 
-Connect to a FortiGate with IP 192.0.2.1 and disable Certificate (chain) check
+Connect to a FortiGate with IP 192.0.2.1 and disable certificate (schain) check
 
 ### EXAMPLE 3
 ```
