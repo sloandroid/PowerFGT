@@ -240,12 +240,16 @@ function Get-FGTFirewallAddress {
         [string]$name,
         [Parameter (Mandatory = $false, ParameterSetName = "uuid")]
         [string]$uuid,
+        [Parameter (Mandatory = $false, ParameterSetName = "type")]
+        [ValidateSet('ipmask', 'iprange', 'geography', 'fqdn')]
+        [string]$type,
         [Parameter (Mandatory = $false)]
         [Parameter (ParameterSetName = "filter")]
         [string]$filter_attribute,
         [Parameter (Mandatory = $false)]
         [Parameter (ParameterSetName = "name")]
         [Parameter (ParameterSetName = "uuid")]
+        [Parameter (ParameterSetName = "type")]
         [Parameter (ParameterSetName = "filter")]
         [ValidateSet('equal', 'contains')]
         [string]$filter_type = "equal",
@@ -281,6 +285,10 @@ function Get-FGTFirewallAddress {
             "uuid" {
                 $filter_value = $uuid
                 $filter_attribute = "uuid"
+            }
+            "type" {
+                $filter_value = $type
+                $filter_attribute = "type"
             }
             default { }
         }
