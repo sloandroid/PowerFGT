@@ -60,6 +60,20 @@ Describe "Get Firewall Address" {
             $address.name | Should -Be $pester_address1
         }
 
+        It "Search Address by type (ipmask)" {
+            $address = Get-FGTFirewallAddress -type ipmask
+            $address[0].type | Should -Be "ipmask"
+        }
+
+        It "Search Address by type (fqdn)" {
+            $address = Get-FGTFirewallAddress -type fqdn
+            $address[0].type | Should -Be "fqdn"
+        }
+
+        It "Search Address by type (iprange)" {
+            $address = Get-FGTFirewallAddress -type iprange
+            $address[0].type | Should -Be "iprange"
+        }
     }
 
     AfterAll {
