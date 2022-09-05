@@ -102,6 +102,8 @@ function Connect-FGT {
         [Parameter(Mandatory = $false)]
         [int]$Timeout = 0,
         [Parameter(Mandatory = $false)]
+        [string]$license,
+        [Parameter(Mandatory = $false)]
         [string[]]$vdom,
         [Parameter(Mandatory = $false)]
         [boolean]$DefaultConnection = $true
@@ -174,6 +176,7 @@ function Connect-FGT {
             $uri = $url + "logincheck"
             $iwrResponse = $null
             try {
+                Write-verbose ($postParams | Convertto-json)
                 $iwrResponse = Invoke-WebRequest $uri -Method POST -Body $postParams -SessionVariable FGT @invokeParams
             }
             catch {
@@ -250,7 +253,33 @@ function Connect-FGT {
                 }
 
                 #Reconnect...
-                Connect-FGT -server $server -port $port -httpOnly:$httpOnly -vdom $vdom -Username $Credentials.username -Password $new_password -DefaultConnection $DefaultConnection
+                Connect-FGT -server $server -port $port -httpOnly:$httpOnly -vdom $vdom -Username $Credentials.username -Password $new_password -SkipCertificateCheck:$SkipCertificateCheck -license $license -DefaultConnection $DefaultConnection
+                return
+            }
+
+            if ($iwrResponse.Content -match '/system/vm/license') {
+                if (-not $PsBoundParameters.ContainsKey('license')) {
+                    #throw if you don't have specify new_password
+                    throw "Need to install a license (use -license parameter)"
+                }
+                $uri = $url + "api/v2/monitor/system/vmlicense/upload"
+                $uri
+                $Bytes = [System.Text.Encoding]::UTF8.GetBytes($license)
+                $license_b64 =[Convert]::ToBase64String($Bytes)
+                $postParams = @{
+                    file_content = $license_b64
+                   # CSRF_TOKEN = $cookie_csrf
+                    #ajax       = 1;
+                   # confirm    = 1
+                }
+                try {
+                   Invoke-RestMethod $uri -Method "POST" -Header $headers -WebSession $FGT -Body ($postParams | Convertto-json) @invokeParams
+                }
+                catch {
+                    Show-FGTException $_
+                    throw "Unable to upload license password"
+                }
+                Write-Warning "Fortigate restart (installing license...)"
                 return
             }
         }
