@@ -381,6 +381,12 @@ function Set-FGTSystemInterface {
         Get-FGTSystemInterface -name PowerFGT | Set-FGTSystemInterface -dhcprelayip $null
 
         This disables DCHP relay and clears the relay ip addresses
+
+        .EXAMPLE
+        $data = @{ "alias" = "Add by" ; "description" = "PowerFGT" }
+        PS > Get-FGTSystemInterface -name PowerFGT | Set-FGTSystemInterface -data $data
+
+        Modify some extra data parameter (not yet available parameter...) on interface PowerFGT
     #>
 
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'medium')]
@@ -409,6 +415,8 @@ function Set-FGTSystemInterface {
         [string]$status,
         [Parameter (Mandatory = $false)]
         [string]$device_identification,
+        [Parameter (Mandatory = $false)]
+        [hashtable]$data,
         [Parameter(Mandatory = $false)]
         [String[]]$vdom,
         [Parameter(Mandatory = $false)]
@@ -478,6 +486,12 @@ function Set-FGTSystemInterface {
                 $dhcprelayipoption = $dhcprelayip -join " "
                 $_interface | add-member -name "dhcp-relay-ip" -membertype NoteProperty -Value $dhcprelayipoption
                 $_interface | add-member -name "dhcp-relay-service" -membertype NoteProperty -Value "enable"
+            }
+        }
+
+        if ( $PsBoundParameters.ContainsKey('data') ) {
+            $data.GetEnumerator() | ForEach-Object {
+                $_interface | Add-member -name $_.key -membertype NoteProperty -Value $_.value
             }
         }
 

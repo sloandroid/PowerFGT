@@ -805,6 +805,23 @@ Describe "Set System Interface" -ForEach $type {
             $interface.'dhcp-relay-service' | Should -Be "disable"
         }
 
+        It "Set System Interface with data (one field)" {
+            $data = @{ "alias" = "Add by PowerFGT" }
+            Get-FGTSystemInterface -name $pester_int1 | Set-FGTSystemInterface -data $data
+            $interface = Get-FGTSystemInterface -name $pester_int1
+            $interface.name | Should -Be $pester_int1
+            $interface.alias | Should -Be "Add by PowerFGT"
+        }
+
+        It "Set System Interface with data (two fields)" {
+            $data = @{ "alias" = "Add by" ; "description" = "PowerFGT" }
+            Get-FGTSystemInterface -name $pester_int1 | Set-FGTSystemInterface -data $data
+            $interface = Get-FGTSystemInterface -name $pester_int1
+            $interface.name | Should -Be $pester_int1
+            $interface.alias | Should -Be "Add by"
+            $interface.description | Should -Be "PowerFGT"
+        }
+
         AfterAll {
             Get-FGTSystemInterface -name $pester_int1 | Remove-FGTSystemInterface -Confirm:$false
         }
