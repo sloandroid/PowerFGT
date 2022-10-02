@@ -644,6 +644,26 @@ Describe "Add System Interface" -ForEach $type {
             $interface.mode | Should -Be "static"
         }
 
+        It "Add System Interface with data (one field)" {
+            $data = @{ "alias" = "Add by PowerFGT" }
+            $p = $_.param
+            Add-FGTSystemInterface -name $pester_int1 @p -data $data
+            $interface = Get-FGTSystemInterface -name $pester_int1
+            $interface.name | Should -Be $pester_int1
+            $interface.mode | Should -Be "static"
+            $interface.alias | Should -Be "Add by PowerFGT"
+        }
+
+        It "Add System Interface with data (two fields)" {
+            $data = @{ "alias" = "Add by" ; "description" = "PowerFGT" }
+            $p = $_.param
+            Add-FGTSystemInterface -name $pester_int1 @p -data $data
+            $interface = Get-FGTSystemInterface -name $pester_int1
+            $interface.name | Should -Be $pester_int1
+            $interface.mode | Should -Be "static"
+            $interface.alias | Should -Be "Add by"
+            $interface.description | Should -Be "PowerFGT"
+        }
     }
 }
 

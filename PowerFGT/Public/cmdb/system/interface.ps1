@@ -37,6 +37,12 @@ function Add-FGTSystemInterface {
         Add-FGTSystemInterface -name PowerFGT_loopback -loopback -mode static -ip 192.0.2.1 -netmask 255.255.255.0 -allowaccess ping
 
         This creates a new interface loopback with IP 192.0.2.1(/24) and allow access to ping
+
+        .EXAMPLE
+        $data = @{ "alias" = "Add by" ; "description" = "PowerFGT" }
+        Add-FGTSystemInterface -name PowerFGT -interface port10 -vlan_id 10 -data $data
+
+        This creates a new interface vlan with extra data parameter (for parameter not yet available)
     #>
 
     Param(
@@ -77,6 +83,8 @@ function Add-FGTSystemInterface {
         [string]$netmask,
         [Parameter (Mandatory = $false)]
         [string]$vdom_interface = "root",
+        [Parameter (Mandatory = $false)]
+        [hashtable]$data,
         [Parameter(Mandatory = $false)]
         [String[]]$vdom,
         [Parameter(Mandatory = $false)]
@@ -164,6 +172,12 @@ function Add-FGTSystemInterface {
             }
 
             $_interface | add-member -name "device-identification" -membertype NoteProperty -Value $device_identification
+        }
+
+        if ( $PsBoundParameters.ContainsKey('data') ) {
+            $data.GetEnumerator() | ForEach-Object {
+                $_interface | Add-member -name $_.key -membertype NoteProperty -Value $_.value
+            }
         }
 
         $null = Invoke-FGTRestMethod -uri $uri -method 'POST' -body $_interface -connection $connection @invokeParams
