@@ -16,12 +16,12 @@ function Connect-FGT {
       .EXAMPLE
       Connect-FGT -Server 192.0.2.1
 
-      Connect to a FortiGate with IP 192.0.2.1dzd
+      Connect to a FortiGate with IP 192.0.2.1
 
       .EXAMPLE
       Connect-FGT -Server 192.0.2.1 -SkipCertificateCheck
 
-      Connect to a FortiGate with IP 192.0.2.1 and disable certificate (schain) check
+      Connect to a FortiGate with IP 192.0.2.1 and disable Certificate (chain) check
 
       .EXAMPLE
       Connect-FGT -Server 192.0.2.1 -httpOnly
@@ -102,6 +102,8 @@ function Connect-FGT {
         [Parameter(Mandatory = $false)]
         [int]$Timeout = 0,
         [Parameter(Mandatory = $false)]
+        [string]$token_code,
+        [Parameter(Mandatory = $false)]
         [string[]]$vdom,
         [Parameter(Mandatory = $false)]
         [boolean]$DefaultConnection = $true
@@ -173,6 +175,7 @@ function Connect-FGT {
             $postParams = @{username = $Credentials.username; secretkey = $Credentials.GetNetworkCredential().Password; ajax = 1 }
             $uri = $url + "logincheck"
             $iwrResponse = $null
+            Write-Verbose ($postParams | Convertto-json)
             try {
                 $iwrResponse = Invoke-WebRequest $uri -Method POST -Body $postParams -SessionVariable FGT @invokeParams
             }
@@ -193,7 +196,21 @@ function Connect-FGT {
                     throw "Admin is now locked out (Please retry in 60 seconds)"
                 }
                 '3' {
-                    throw "Two-factor Authentication is needed (not yet supported with PowerFGT)"
+                    if ( $PsBoundParameters.ContainsKey('token_code') ) {
+                        $postParams += @{token_code = $token_code }
+                        Write-Verbose ($postParams | Convertto-json)
+                        try {
+                            $iwrResponse = Invoke-WebRequest $uri -Method POST -Body $postParams -WebSession $FGT @invokeParams
+                        }
+                        catch {
+                            Show-FGTException $_
+                            throw "Unable to connect to FortiGate"
+                        }
+                    }
+                    else {
+                        throw "Two-factor Authentication is needed (not yet supported with PowerFGT)"
+                    }
+
                 }
                 '4' {
                     if (-not $PsBoundParameters.ContainsKey('new_password')) {
